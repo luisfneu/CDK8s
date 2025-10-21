@@ -8,26 +8,13 @@ data "external" "minikube_ip" {
 	]
 }
 
-locals {
-		resolved_minikube_ip = var.minikube_ip_override != "" ? var.minikube_ip_override : (
-			var.enable_ingress ? data.external.minikube_ip[0].result.ip : ""
-		)
-	ingress_domain_base = local.resolved_minikube_ip != "" ? "${local.resolved_minikube_ip}.nip.io" : ""
-	jenkins_host        = local.ingress_domain_base != "" ? "jenkins.${local.ingress_domain_base}" : ""
-	grafana_host        = local.ingress_domain_base != "" ? "grafana.${local.ingress_domain_base}" : ""
-	prometheus_host     = local.ingress_domain_base != "" ? "prometheus.${local.ingress_domain_base}" : ""
-}
 
-# Run local port-forwards automatically after key Helm releases are applied (optional convenience)
 resource "null_resource" "start_port_forwards" {
-	# Re-run if script content or dependent releases change
 	triggers = {
-		# Static triggers (still useful for context in state)
 		script_sha = filesha256("${path.root}/../scripts/port-forward.sh")
 		jenkins_id = try(helm_release.jenkins.id, "")
 		prom_id    = try(helm_release.kube_prometheus_stack.id, "")
 		force_bump = var.force_port_forward_refresh
-		# Always-run trigger: new UUID each plan so resource is replaced and provisioner re-executes
 		always_run = uuid()
 	}
 
@@ -39,4 +26,3 @@ resource "null_resource" "start_port_forwards" {
 	depends_on = [helm_release.jenkins, helm_release.kube_prometheus_stack]
 }
 
-# Root module previously empty; now provides shared locals for ingress.
