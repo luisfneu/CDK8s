@@ -1,18 +1,44 @@
-install infra by opentofu in a minikube
+# Kubernetes local
+brew install minikube
 
-install: 
-brew install cdk8s
+# Inicie cluster local
+minikube start
 
-Create a project: 
+# Kubectl
+brew install kubectl
 
-cdk8s init python-app
+# Python e pip
+brew install python
 
-create main.py
+# Node (usado internamente pelo cdk8s-cli)
+brew install node
 
+# CDK8s CLI
+npm install -g cdk8s-cli
 
-create a manifest
+# validar
 
-navigate to project
-run: 
+    minikube status
+    kubectl get nodes
+    cdk8s --version
 
-cdk8s synth
+# gerar
+    mkdir cdk8s-poc-python && cd cdk8s-poc-python
+    cdk8s init python-app
+
+    pip install -r requirements.txt
+
+    cdk8s import k8s
+
+Isso cria imports/k8s.py com todas as classes do core Kubernetes.
+
+# gerar manifesto
+
+    cdk8s synth
+    dist/nginx-chart.k8s.yaml
+    kubectl apply -f dist/
+
+# testar
+    kubectl get pods
+    kubectl get svc
+    minikube service nginx-service
