@@ -16,13 +16,13 @@ brew install node
 # CDK8s CLI
 npm install -g cdk8s-cli
 
-# validar
+# Validar
 
     minikube status
     kubectl get nodes
     cdk8s --version
 
-# gerar
+# Gerar
     mkdir cdk8s-poc-python && cd cdk8s-poc-python
     cdk8s init python-app
 
@@ -32,13 +32,13 @@ npm install -g cdk8s-cli
 
 Isso cria imports/k8s.py com todas as classes do core Kubernetes.
 
-# gerar manifesto
+# Criar manifesto
 
     cdk8s synth
     dist/nginx-chart.k8s.yaml
     kubectl apply -f dist/
 
-# testar
+# Testar
     kubectl get pods
     kubectl get svc
     minikube service nginx-service
