@@ -1,0 +1,10 @@
+{
+  "app": "npx ts-node src/app.ts",
+  "language": "typescript",
+  "output": "dist",
+  "dependencies": [
+    "cdk8s",
+    "cdk8s-plus-32",
+    "constructs"
+  ]
+}
