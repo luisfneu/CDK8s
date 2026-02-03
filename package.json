@@ -1,24 +1,31 @@
 {
-  "name": "meu-projeto-cdk8s",
+  "name": "cdk8s-project",
   "version": "1.0.0",
-  "description": "Infraestrutura Kubernetes gerada com CDK8s",
-  "main": "dist/app.js",
+  "description": "Projeto CDK8s para gerenciar recursos Kubernetes",
+  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
     "synth": "cdk8s synth",
     "watch": "tsc -w",
-    "clean": "rm -rf dist",
-    "start": "npm run synth"
+    "import": "cdk8s import",
+    "deploy": "kubectl apply -f dist/",
+    "dev": "npm run build && npm run synth"
   },
+  "keywords": [
+    "cdk8s",
+    "kubernetes",
+    "k8s"
+  ],
+  "author": "",
   "license": "MIT",
   "dependencies": {
-    "cdk8s": "^2.7.72",
-    "cdk8s-plus-32": "^2.7.72",
+    "cdk8s": "^2.68.0",
+    "cdk8s-plus-27": "^2.8.0",
     "constructs": "^10.3.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.1",
-    "@types/node": "^20.10.0"
+    "@types/node": "^20.10.0",
+    "cdk8s-cli": "^2.68.0",
+    "typescript": "^5.3.0"
   }
 }
