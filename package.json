@@ -1,7 +1,7 @@
 {
-  "name": "cdk8s-project",
+  "name": "cdk8s-LeL",
   "version": "1.0.0",
-  "description": "Projeto CDK8s para gerenciar recursos Kubernetes",
+  "description": "Projeto CDK8s",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
@@ -24,8 +24,8 @@
     "constructs": "^10.3.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
-    "cdk8s-cli": "^2.68.0",
-    "typescript": "^5.3.0"
+    "@types/node": "^25.2.0",
+    "cdk8s-cli": "^2.204.5",
+    "typescript": "^5.9.3"
   }
 }
