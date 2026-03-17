@@ -1,8 +1,3 @@
-# Compiled files
-dist/
-*.js
-*.d.ts
-
 # Dependencies
 node_modules/
 

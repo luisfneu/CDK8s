@@ -21,3 +21,16 @@ assim conseguimos empilhar nossa infraestrutura ate ter nossos charts e conseque
 basicamente, o que conseguimos entender
 eu to usando typescript aqui, porque é a linguagem padrao do CDK e do CDK8s
 
+
+
+
+Kdk8s 
+
+ter um cluster de k8s 
+instalar cdk8s via node 
+
+npm install -g cdk8s-cli
+
+criar um diretorio para criar sua app 
+
+cdk8s init typescript-app dentro do diretorio vazio

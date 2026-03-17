@@ -1,6 +1,6 @@
-import { Chart, ChartProps } from 'cdk8s';
+import { App, Chart, ChartProps, Size, Duration } from 'cdk8s';
 import { Construct } from 'constructs';
-import * as kplus from 'cdk8s-plus-27';
+import * as kplus from 'cdk8s-plus-28';
 
 export interface DatabaseChartProps extends ChartProps {
   dbName: string;
@@ -9,12 +9,13 @@ export interface DatabaseChartProps extends ChartProps {
   port: number;
   storageSize?: string;
   rootPassword: string;
+}
 
 export class DatabaseChart extends Chart {
   constructor(scope: Construct, id: string, props: DatabaseChartProps) {
     super(scope, id, {
       ...props,
-      namespace: props.namespace || 'default',
+      namespace: props.namespace || 'cdk8s',
     });
 
     const {
@@ -47,7 +48,7 @@ export class DatabaseChart extends Chart {
         labels,
       },
       accessModes: [kplus.PersistentVolumeAccessMode.READ_WRITE_ONCE],
-      storage: kplus.Size.gibibytes(parseInt(storageSize)),
+      storage: Size.gibibytes(parseInt(storageSize)),
     });
 
     const statefulSet = new kplus.StatefulSet(this, 'statefulset', {
@@ -79,6 +80,35 @@ export class DatabaseChart extends Chart {
         ensureNonRoot: false,
         readOnlyRootFilesystem: false,
       },
+      resources: {
+        cpu: {
+          request: kplus.Cpu.millis(250),
+          limit: kplus.Cpu.millis(500),
+        },
+        memory: {
+          request: Size.mebibytes(512),
+          limit: Size.gibibytes(1),
+        },
+      },
+      liveness: kplus.Probe.fromCommand([
+        'mysqladmin',
+        'ping',
+        '-h',
+        'localhost',
+      ], {
+        initialDelaySeconds: Duration.seconds(30),
+        periodSeconds: Duration.seconds(10),
+        timeoutSeconds: Duration.seconds(5),
+      }),
+      readiness: kplus.Probe.fromCommand([
+        'mysqladmin',
+        'ping',
+        '-h',
+        'localhost',
+      ], {
+        initialDelaySeconds: Duration.seconds(10),
+        periodSeconds: Duration.seconds(5),
+      }),
     });
 
     container.env.addVariable(
@@ -89,37 +119,20 @@ export class DatabaseChart extends Chart {
       })
     );
 
-    container.resources.cpu.request(kplus.Cpu.millis(250));
-    container.resources.cpu.limit(kplus.Cpu.millis(500));
-    container.resources.memory.request(kplus.Size.mebibytes(512));
-    container.resources.memory.limit(kplus.Size.gibibytes(1));
-
     const volume = kplus.Volume.fromPersistentVolumeClaim(
       this,
       'data-volume',
       pvc
     );
     container.mount('/var/lib/mysql', volume);
-
-    container.addLivenessProbe(kplus.Probe.fromCommand([
-      'mysqladmin',
-      'ping',
-      '-h',
-      'localhost',
-    ], {
-      initialDelaySeconds: kplus.Duration.seconds(30),
-      periodSeconds: kplus.Duration.seconds(10),
-      timeoutSeconds: kplus.Duration.seconds(5),
-    }));
-
-    container.addReadinessProbe(kplus.Probe.fromCommand([
-      'mysqladmin',
-      'ping',
-      '-h',
-      'localhost',
-    ], {
-      initialDelaySeconds: kplus.Duration.seconds(10),
-      periodSeconds: kplus.Duration.seconds(5),
-    }));
   }
 }
+
+const app = new App();
+new DatabaseChart(app, 'database', {
+  dbName: 'mysql',
+  image: 'mysql:8.0',
+  port: 3306,
+  rootPassword: 'changeme',
+});
+app.synth();

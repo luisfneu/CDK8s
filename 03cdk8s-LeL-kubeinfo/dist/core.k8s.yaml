@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-service-c8f418b5
+  namespace: cdk8s
+spec:
+  ports:
+    - port: 81
+      targetPort: 9898
+  selector:
+    app: podinfo-k8s
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-deployment-c8e707eb
+  namespace: cdk8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podinfo-k8s
+  template:
+    metadata:
+      labels:
+        app: podinfo-k8s
+    spec:
+      containers:
+        - image: stefanprodan/podinfo:6.11.1
+          name: podinfo-kubernetes
+          ports:
+            - containerPort: 9898

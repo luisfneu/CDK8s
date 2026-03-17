@@ -1,5 +1,0 @@
-language: typescript
-app: node dist/main.js
-output: dist/
-imports:
-  - k8s@1.35.0

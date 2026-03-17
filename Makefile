@@ -1,5 +1,3 @@
-.PHONY: help install import build synth deploy clean dev watch
-
 install:
 	npm install
 
